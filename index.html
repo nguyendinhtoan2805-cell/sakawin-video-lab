@@ -294,7 +294,7 @@
   <div id="report"></div>
 
   <footer>
-    <span>SAKAWIN CONTENT LAB · PHIẾU PHÂN TÍCH VIDEO BÁN HÀNG</span>
+    <span>SAKAWIN CONTENT LAB · PHIẾU PHÂN TÍCH VIDEO</span>
     <span id="footDate"></span>
   </footer>
 </div>
@@ -495,14 +495,14 @@ const DAT_MAP = {
 };
 
 const STAT_LABELS = { luot_xem:"Lượt xem", luot_thich:"Lượt thích", binh_luan:"Bình luận", chia_se:"Chia sẻ", luu:"Lưu" };
-const META_LABELS = { nen_tang:"Nền tảng", thoi_luong:"Thời lượng", the_loai:"Thể loại", san_pham:"Sản phẩm", guong_mat:"Gương mặt", cta:"CTA" };
+const META_LABELS = { muc_tieu:"Mục tiêu video", nen_tang:"Nền tảng", thoi_luong:"Thời lượng", the_loai:"Thể loại", san_pham:"Sản phẩm", guong_mat:"Gương mặt", cta:"CTA" };
 
 function render(d){
   let h = "";
 
   /* Hero */
   h += `<div class="hero">
-    <div class="eyebrow">Sakawin Content Lab · Phân tích video bán hàng</div>
+    <div class="eyebrow">Sakawin Content Lab · Phân tích video</div>
     <h1>Phiếu <em>phân tích</em> video</h1>
     <p class="hook">${esc(d.hook_mo_ta)}</p>
     <p class="summary">${esc(d.tom_tat)}</p>
@@ -681,6 +681,8 @@ document.getElementById("btnExport").addEventListener("click", () => {
   const savedInput = document.getElementById("jsonInput").value;
   reportEl.innerHTML = "";
   document.getElementById("jsonInput").value = "";
+  errMsg.textContent = "";
+  errMsg.style.display = "none";
   overlay.classList.remove("open");
   const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
   reportEl.innerHTML = savedReport;
