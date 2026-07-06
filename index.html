@@ -268,8 +268,10 @@
 
 <div class="toolbar">
   <button class="btn btn--accent" id="btnPaste">Dán dữ liệu mới</button>
+  <button class="btn" id="btnFrames">Thêm ảnh từ video</button>
   <button class="btn" id="btnExport">Tải phiếu (.html)</button>
   <button class="btn" id="btnPrint">In / Lưu PDF</button>
+  <input type="file" id="videoInput" accept="video/*" style="display:none">
 </div>
 
 <div class="wrap">
@@ -655,6 +657,58 @@ document.getElementById("btnExport").addEventListener("click", () => {
   a.click();
   a.remove();
   URL.revokeObjectURL(a.href);
+});
+
+/* Trích khung hình từ file video ngay trong trình duyệt: tua đến từng mốc thời gian trong storyboard và chụp ảnh */
+const videoInput = document.getElementById("videoInput");
+const btnFrames = document.getElementById("btnFrames");
+btnFrames.addEventListener("click", () => videoInput.click());
+
+function tcToSeconds(tc){
+  const m = String(tc || "").match(/(\d+):(\d{1,2})/);
+  return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : null;
+}
+
+videoInput.addEventListener("change", async () => {
+  const file = videoInput.files[0];
+  if (!file) return;
+  const frames = [];
+  (CURRENT.storyboard || []).forEach(sc => (sc.khung_hinh || []).forEach(f => frames.push(f)));
+  if (!frames.length){ alert("Chưa có dữ liệu storyboard để gắn ảnh. Hãy dán JSON phân tích trước."); videoInput.value = ""; return; }
+  const url = URL.createObjectURL(file);
+  const vid = document.createElement("video");
+  vid.preload = "auto"; vid.muted = true; vid.playsInline = true; vid.src = url;
+  const oldLabel = btnFrames.textContent;
+  try {
+    await new Promise((res, rej) => {
+      vid.onloadedmetadata = res;
+      vid.onerror = () => rej(new Error("trình duyệt không đọc được định dạng video này (thử chuyển sang MP4/H.264)"));
+    });
+    const W = 360;
+    const H = Math.round(W * vid.videoHeight / vid.videoWidth) || 640;
+    const canvas = document.createElement("canvas");
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+    let done = 0;
+    for (let i = 0; i < frames.length; i++){
+      const t = tcToSeconds(frames[i].thoi_diem);
+      if (t === null || t > vid.duration) continue;
+      btnFrames.textContent = "Đang trích " + (i + 1) + "/" + frames.length + "…";
+      vid.currentTime = Math.min(t + 0.1, Math.max(vid.duration - 0.05, 0));
+      await new Promise(res => { vid.onseeked = res; });
+      ctx.drawImage(vid, 0, 0, W, H);
+      frames[i].anh = canvas.toDataURL("image/jpeg", 0.8);
+      done++;
+    }
+    render(CURRENT);
+    if (!done) alert("Không trích được khung hình nào — kiểm tra mốc thời gian trong JSON có khớp độ dài video không.");
+  } catch (e){
+    alert("Lỗi khi trích ảnh: " + e.message);
+  } finally {
+    btnFrames.textContent = oldLabel;
+    URL.revokeObjectURL(url);
+    videoInput.value = "";
+  }
 });
 
 document.getElementById("btnPaste").addEventListener("click", () => { overlay.classList.add("open"); document.getElementById("jsonInput").focus(); });
