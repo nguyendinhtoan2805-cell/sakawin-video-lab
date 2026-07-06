@@ -181,6 +181,17 @@
   .badge--khong{background:#EFEFEC;color:var(--muted);border:1px solid var(--hairline)}
   .checklist .note{color:var(--muted)}
 
+  /* ===== Điểm cần sửa ===== */
+  .fix-list{display:flex;flex-direction:column;gap:14px}
+  .fix-card{background:var(--card);border:1px solid var(--hairline);border-left:4px solid var(--amber);border-radius:0 12px 12px 0;padding:20px 24px}
+  .fix-head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+  .fix-no{font-family:var(--mono);font-weight:700;color:var(--amber);font-size:12px}
+  .fix-title{font-weight:700;font-size:15px}
+  .fix-tc{font-family:var(--mono);font-size:11px;background:var(--amber-soft);color:var(--amber);border-radius:6px;padding:2px 8px}
+  .fix-harm{font-size:13.5px;color:var(--muted);margin-bottom:10px;line-height:1.6}
+  .fix-sol{background:var(--paper);border:1px dashed var(--hairline);border-radius:8px;padding:10px 14px;font-size:13.5px;line-height:1.6}
+  .fix-sol b{color:var(--accent)}
+
   /* ===== Công thức ===== */
   .formula-block{margin-top:22px}
   .formula-block .flabel{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
@@ -447,6 +458,11 @@ const SAMPLE = {
     { tieu_chi: "Demo tính năng cốt lõi", dat: "dat", ghi_chu: "Chịu tải, nâng hạ, nghiêng mặt bàn, khay đọc — 4 tính năng bán hàng chính đều được demo trong 32 giây." },
     { tieu_chi: "Chạm tâm lý phụ huynh", dat: "dat", ghi_chu: "Thông điệp cột sống + \u201cbàn lớn cùng con cả chục năm\u201d xử lý luôn phản đối về giá bằng khung đầu tư dài hạn." }
   ],
+  diem_can_sua: [
+    { van_de: "Thiếu cảnh sử dụng đời thường", dan_chung: "0:05\u20130:18", tac_hai: "Toàn bộ phần giữa là demo tính năng dàn dựng; phụ huynh chưa thấy con dùng bàn trong sinh hoạt thật nên độ tin giảm một nhịp, video mang mùi quảng cáo rõ hơn.", de_xuat: "Chèn 3\u20134 giây cảnh bé ngồi học buổi tối dưới đèn bàn, bố mẹ ngồi cạnh — đặt ngay sau cảnh khay đọc sách ở 0:15." },
+    { van_de: "CTA thiếu lý do hành động ngay", dan_chung: "0:28", tac_hai: "\u201cGhé giỏ hàng màu vàng\u201d có điều hướng nhưng không có yếu tố thời hạn/khan hiếm, người xem dễ lưu video rồi quên.", de_xuat: "Thêm text overlay \u201cƯu đãi Back to School đến hết 15/8\u201d xuất hiện đúng lúc đọc CTA." },
+    { van_de: "Không có social proof", dan_chung: "Toàn video", tac_hai: "Chỉ có lời người bán, thiếu tín hiệu bên thứ ba nên khách mới phải tự tin vào quảng cáo — rào cản lớn với sản phẩm giá 3\u20137 triệu.", de_xuat: "Chèn 2 giây text \u201cHơn 10.000 bé đang dùng\u201d hoặc cắt nhanh 2\u20133 ảnh feedback thật của khách vào đoạn chuyển cảnh 0:18." }
+  ],
   cong_thuc: {
     cau_truc_hinh_anh: ["Hook nghịch lý (bố đứng lên bàn)", "Cận bằng chứng (khung thép không rung)", "Demo tính năng liên hoàn (nâng hạ \u2192 nghiêng \u2192 khay đọc)", "Split screen sai\u2013đúng tư thế", "Khoảnh khắc cảm xúc bố con + CTA"],
     cau_truc_loi_thoai: ["Câu hỏi nghịch lý gây tò mò", "Bằng chứng kỹ thuật (chịu tải, cơ chế)", "Lợi ích gắn với sức khỏe của con", "So sánh hậu quả sai\u2013đúng", "Khung đầu tư dài hạn + CTA điều hướng"],
@@ -588,6 +604,26 @@ function render(d){
           }).join("")}
         </tbody>
       </table>
+    </section>`;
+  }
+
+  /* Điểm cần sửa */
+  if (Array.isArray(d.diem_can_sua) && d.diem_can_sua.length){
+    h += `<section>
+      <div class="eyebrow">Phản biện</div>
+      <h2>Điểm cần sửa &amp; đề xuất</h2>
+      <div class="fix-list">
+        ${d.diem_can_sua.map((x,i) => `
+          <div class="fix-card">
+            <div class="fix-head">
+              <span class="fix-no">${String(i+1).padStart(2,"0")}</span>
+              <span class="fix-title">${esc(x.van_de)}</span>
+              ${x.dan_chung ? `<span class="fix-tc">${esc(x.dan_chung)}</span>` : ""}
+            </div>
+            ${x.tac_hai ? `<div class="fix-harm">${esc(x.tac_hai)}</div>` : ""}
+            ${x.de_xuat ? `<div class="fix-sol"><b>→ Đề xuất:</b> ${esc(x.de_xuat)}</div>` : ""}
+          </div>`).join("")}
+      </div>
     </section>`;
   }
 
