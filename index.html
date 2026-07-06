@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phiếu phân tích video · Sakawin Content Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFAF6;
+    --card:#FFFFFF;
+    --ink:#17171B;
+    --muted:#70707A;
+    --hairline:#E7E4DC;
+    --accent:#D8222B;
+    --accent-soft:#FBEBEC;
+    --amber:#B07617;
+    --amber-soft:#FCF3E3;
+    --serif:'Playfair Display', Georgia, 'Times New Roman', serif;
+    --sans:'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, 'SF Mono', Consolas, monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:56px 28px 80px}
+
+  /* ===== Toolbar ===== */
+  .toolbar{
+    position:fixed;top:18px;right:18px;z-index:50;
+    display:flex;gap:8px;
+  }
+  .btn{
+    font-family:var(--sans);font-size:13px;font-weight:600;
+    padding:9px 16px;border-radius:8px;cursor:pointer;
+    border:1px solid var(--hairline);background:var(--card);color:var(--ink);
+    box-shadow:0 1px 4px rgba(20,20,25,.06);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(20,20,25,.1)}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .btn--accent{background:var(--accent);border-color:var(--accent);color:#fff}
+
+  /* ===== Sample banner ===== */
+  .sample-banner{
+    display:flex;align-items:center;gap:12px;justify-content:space-between;
+    background:var(--accent-soft);border:1px solid #F2CDCF;border-radius:10px;
+    padding:12px 16px;margin-bottom:40px;font-size:13.5px;color:#8C1A20;
+  }
+  .sample-banner button{background:none;border:none;color:#8C1A20;font-weight:700;cursor:pointer;font-size:13px;text-decoration:underline}
+
+  /* ===== Typography helpers ===== */
+  .eyebrow{
+    font-family:var(--mono);font-size:11px;font-weight:700;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--accent);
+    display:flex;align-items:center;gap:10px;margin-bottom:10px;
+  }
+  .eyebrow::before{content:"";width:22px;height:2px;background:var(--accent);flex:none}
+  h2{font-family:var(--serif);font-size:30px;font-weight:700;letter-spacing:-.01em;margin-bottom:18px}
+  section{margin-top:72px}
+
+  /* ===== Hero ===== */
+  .hero .eyebrow{justify-content:flex-start}
+  .hero h1{
+    font-family:var(--serif);font-weight:700;
+    font-size:clamp(40px,6vw,58px);line-height:1.08;letter-spacing:-.015em;
+    margin:6px 0 22px;
+  }
+  .hero h1 em{font-style:italic;font-weight:600;color:var(--accent)}
+  .hero .hook{
+    font-size:19px;font-weight:600;line-height:1.5;max-width:640px;margin-bottom:14px;
+  }
+  .hero .summary{color:var(--muted);max-width:680px;margin-bottom:22px}
+  .link-goc{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:12.5px;font-weight:500;
+    color:var(--ink);text-decoration:none;
+    border:1px solid var(--ink);border-radius:999px;padding:8px 18px;
+    transition:background .15s ease,color .15s ease;
+  }
+  .link-goc:hover{background:var(--ink);color:#fff}
+  .link-goc .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @media (prefers-reduced-motion: reduce){.link-goc .dot{animation:none}}
+
+  /* ===== Meta grid ===== */
+  .meta-grid{
+    margin-top:36px;border-top:1px solid var(--hairline);
+    display:grid;grid-template-columns:repeat(3,1fr);
+  }
+  .meta-item{padding:16px 18px 16px 0;border-bottom:1px solid var(--hairline)}
+  .meta-item .label{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .meta-item .value{font-size:14px;font-weight:500;line-height:1.5}
+
+  /* ===== Vì sao chạy ===== */
+  .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .why-card{
+    background:var(--card);border:1px solid var(--hairline);border-radius:12px;
+    padding:22px 24px;position:relative;overflow:hidden;
+  }
+  .why-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+  .why-card .label{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .why-card .keyword{font-family:var(--serif);font-style:italic;font-size:24px;font-weight:600;color:var(--accent);margin:4px 0 8px}
+  .why-card .desc{font-size:13.5px;color:var(--ink);line-height:1.6}
+
+  /* ===== Chỉ số ===== */
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--hairline);border-radius:12px;overflow:hidden;background:var(--card)}
+  .stat{padding:22px 18px;border-left:1px solid var(--hairline)}
+  .stat:first-child{border-left:none}
+  .stat .num{font-family:var(--mono);font-size:22px;font-weight:700;letter-spacing:-.02em}
+  .stat .lbl{font-size:12px;color:var(--muted);margin-top:4px}
+
+  /* ===== Storyboard ===== */
+  .scene{margin-top:44px}
+  .scene-head{display:flex;align-items:baseline;gap:16px;padding-bottom:14px;border-bottom:2px solid var(--ink);flex-wrap:wrap}
+  .scene-no{font-family:var(--serif);font-size:38px;font-weight:700;color:var(--accent);line-height:1}
+  .scene-range{font-family:var(--mono);font-size:12px;font-weight:700;background:var(--ink);color:#fff;border-radius:999px;padding:4px 12px}
+  .scene-title{font-family:var(--serif);font-size:21px;font-weight:700;flex:1;min-width:200px}
+  .scene-desc{color:var(--muted);font-size:14px;margin-top:12px;max-width:700px}
+
+  .frames{margin-top:20px;position:relative;padding-left:26px}
+  .frames::before{content:"";position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--hairline)}
+  .frame{position:relative;margin-bottom:22px;background:var(--card);border:1px solid var(--hairline);border-radius:12px;padding:22px 24px}
+  .frame::before{
+    content:"";position:absolute;left:-26px;top:26px;width:9px;height:9px;border-radius:50%;
+    background:var(--accent);border:2px solid var(--paper);transform:translateX(3.5px);
+  }
+  .frame-top{display:flex;gap:20px;align-items:flex-start}
+  .thumb{
+    flex:none;width:104px;aspect-ratio:9/16;border-radius:8px;overflow:hidden;
+    background:#111114;color:#fff;display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:15px;font-weight:700;position:relative;
+  }
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .thumb .rec{position:absolute;top:8px;left:8px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .frame-body{flex:1;min-width:0}
+  .tcode{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:6px}
+  .frame-cap{font-size:15px;font-weight:600;margin-bottom:5px}
+  .frame-note{font-size:13.5px;color:var(--muted);line-height:1.6}
+  .voice{
+    margin-top:14px;border-left:3px solid var(--accent);background:var(--accent-soft);
+    border-radius:0 8px 8px 0;padding:10px 16px;
+  }
+  .voice .vlabel{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+  .voice .vtext{font-family:var(--serif);font-style:italic;font-size:15.5px;line-height:1.55}
+  .detail-grid{
+    margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:0;
+    border-top:1px solid var(--hairline);
+  }
+  .detail{padding:10px 14px 10px 0;border-bottom:1px solid var(--hairline);font-size:13px;line-height:1.55}
+  .detail .dlabel{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+  .cam-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+  .cam-tag{font-family:var(--mono);font-size:11px;background:var(--paper);border:1px solid var(--hairline);border-radius:6px;padding:2px 8px}
+  .cam-tag b{color:var(--accent);font-weight:700}
+
+  /* ===== Checklist ===== */
+  table.checklist{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--hairline);border-radius:12px;overflow:hidden}
+  .checklist th{
+    font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);text-align:left;padding:14px 18px;border-bottom:2px solid var(--ink);background:var(--paper);
+  }
+  .checklist td{padding:16px 18px;border-bottom:1px solid var(--hairline);font-size:13.5px;vertical-align:top}
+  .checklist tr:last-child td{border-bottom:none}
+  .crit{display:flex;align-items:flex-start;gap:10px;font-weight:600;font-size:14px}
+  .crit-no{
+    flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);
+    font-family:var(--mono);font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px;
+  }
+  .badge{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;border-radius:999px;padding:4px 12px;white-space:nowrap}
+  .badge--dat{background:var(--accent);color:#fff}
+  .badge--motphan{background:var(--amber-soft);color:var(--amber);border:1px solid #E4C98F}
+  .badge--khong{background:#EFEFEC;color:var(--muted);border:1px solid var(--hairline)}
+  .checklist .note{color:var(--muted)}
+
+  /* ===== Công thức ===== */
+  .formula-block{margin-top:22px}
+  .formula-block .flabel{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .chain{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .chain .step{
+    background:var(--card);border:1px solid var(--hairline);border-radius:8px;
+    padding:8px 14px;font-size:13px;font-weight:500;
+  }
+  .chain .arrow{font-family:var(--mono);color:var(--accent);font-weight:700}
+  .verdict{
+    margin-top:28px;background:var(--card);border:1px solid var(--hairline);border-left:4px solid var(--accent);
+    border-radius:0 12px 12px 0;padding:22px 26px;
+  }
+  .verdict p{font-family:var(--serif);font-size:16.5px;line-height:1.7;font-style:italic}
+
+  /* ===== Kho ===== */
+  .banks{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .bank{background:var(--card);border:1px solid var(--hairline);border-radius:12px;padding:24px}
+  .bank h3{font-family:var(--serif);font-size:19px;font-weight:700;margin-bottom:14px}
+  .bank ul{list-style:none}
+  .bank li{
+    position:relative;padding:10px 0 10px 22px;border-bottom:1px dashed var(--hairline);
+    font-size:13.5px;line-height:1.6;
+  }
+  .bank li:last-child{border-bottom:none}
+  .bank li::before{content:"—";position:absolute;left:0;color:var(--accent);font-weight:700}
+  .bank--quotes li{font-family:var(--serif);font-style:italic;font-size:14.5px}
+
+  footer{
+    margin-top:80px;padding-top:24px;border-top:1px solid var(--hairline);
+    font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted);
+    display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+
+  /* ===== Paste panel ===== */
+  .overlay{
+    position:fixed;inset:0;background:rgba(20,20,24,.55);z-index:100;
+    display:none;align-items:center;justify-content:center;padding:20px;
+  }
+  .overlay.open{display:flex}
+  .panel{
+    background:var(--card);border-radius:16px;width:100%;max-width:640px;
+    padding:30px;box-shadow:0 20px 60px rgba(0,0,0,.25);
+  }
+  .panel h3{font-family:var(--serif);font-size:24px;margin-bottom:8px}
+  .panel .hint{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+  .panel textarea{
+    width:100%;height:260px;font-family:var(--mono);font-size:12px;line-height:1.5;
+    border:1px solid var(--hairline);border-radius:10px;padding:14px;resize:vertical;
+    background:var(--paper);color:var(--ink);
+  }
+  .panel textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .panel .err{color:var(--accent);font-size:13px;font-weight:600;margin-top:10px;display:none}
+  .panel .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+
+  /* ===== Responsive ===== */
+  @media (max-width:720px){
+    .wrap{padding:80px 18px 60px}
+    .meta-grid{grid-template-columns:1fr 1fr}
+    .why-grid{grid-template-columns:1fr}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .stat{border-top:1px solid var(--hairline)}
+    .stat:nth-child(-n+2){border-top:none}
+    .stat:nth-child(odd){border-left:none}
+    .frame-top{flex-direction:column}
+    .thumb{width:88px}
+    .detail-grid{grid-template-columns:1fr}
+    .banks{grid-template-columns:1fr}
+    .checklist th:nth-child(3),.checklist td:nth-child(3){display:none}
+    .checklist td:nth-child(1){padding-bottom:4px}
+  }
+
+  /* ===== Print ===== */
+  @media print{
+    .toolbar,.sample-banner,.overlay{display:none !important}
+    body{background:#fff}
+    .wrap{padding:0;max-width:100%}
+    section{margin-top:36px;break-inside:auto}
+    .frame,.why-card,.bank{break-inside:avoid}
+    a.link-goc{border:none;padding:0}
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button class="btn btn--accent" id="btnPaste">Dán dữ liệu mới</button>
+  <button class="btn" id="btnExport">Tải phiếu (.html)</button>
+  <button class="btn" id="btnPrint">In / Lưu PDF</button>
+</div>
+
+<div class="wrap">
+  <div class="sample-banner" id="sampleBanner">
+    <span>Đang hiển thị <b>dữ liệu mẫu minh họa</b>. Bấm "Dán dữ liệu mới" ở góc phải để thay bằng kết quả phân tích thật từ AI.</span>
+    <button id="btnDismiss">Ẩn</button>
+  </div>
+
+  <div id="report"></div>
+
+  <footer>
+    <span>SAKAWIN CONTENT LAB · PHIẾU PHÂN TÍCH VIDEO BÁN HÀNG</span>
+    <span id="footDate"></span>
+  </footer>
+</div>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Dán dữ liệu phân tích">
+  <div class="panel">
+    <h3>Dán dữ liệu phân tích</h3>
+    <p class="hint">Dán toàn bộ khối JSON mà AI (Gemini / Claude) trả về vào ô bên dưới. Có thể dán kèm cả dấu ```json — hệ thống tự loại bỏ.</p>
+    <textarea id="jsonInput" placeholder='{ "tieu_de": "...", ... }'></textarea>
+    <p class="err" id="errMsg"></p>
+    <div class="actions">
+      <button class="btn" id="btnClose">Đóng</button>
+      <button class="btn btn--accent" id="btnRender">Hiển thị phiếu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= DỮ LIỆU MẪU (minh họa — không phải số liệu thật) ================= */
+const SAMPLE = {
+  tieu_de: "Bàn học chống gù Sakawin S110 (mẫu minh họa)",
+  hook_mo_ta: "Bố đứng cả người lên bàn học của con — bàn không rung, sách không rơi",
+  tom_tat: "Video mở đầu bằng cảnh người bố đứng hẳn lên mặt bàn học của con để chứng minh độ chắc chắn của khung thép. Tiếp theo là chuỗi demo tính năng: bé tự quay tay nâng mặt bàn theo chiều cao, nghiêng mặt bàn 40 độ mà sách không rơi nhờ thanh chặn, và khay đọc sách giữ đúng khoảng cách mắt. Video kết bằng màn hình chia đôi so sánh tư thế ngồi cúi gằm ở bàn thường với tư thế lưng thẳng ở bàn S110, kèm lời kêu gọi ghé giỏ hàng.",
+  link_goc: "https://www.tiktok.com/",
+  meta: {
+    nen_tang: "TikTok",
+    thoi_luong: "32 giây · dọc 9:16",
+    the_loai: "Demo test + thoại phụ huynh",
+    san_pham: "Bàn học thông minh chống gù Sakawin S110",
+    guong_mat: "Ông bố khoảng 35 tuổi, áo polo xanh navy; bé trai 7 tuổi mặc đồng phục học sinh",
+    cta: "\u201cGhé giỏ hàng màu vàng chọn size cho bé nha\u201d (chỉ tay xuống giỏ hàng)"
+  },
+  chi_so_nen_tang: "TikTok",
+  chi_so: { luot_xem: 245300, luot_thich: 6120, binh_luan: 89, chia_se: 214, luu: 892 },
+  vi_sao_chay: [
+    { nhan: "Mở đầu", tu_khoa: "Nghịch lý", mo_ta: "Người lớn 70kg đứng lên bàn trẻ em là hình ảnh phi lý, buộc người xem dừng lại xem chuyện gì xảy ra." },
+    { nhan: "Điểm đau", tu_khoa: "Gù lưng", mo_ta: "Cảnh bé cúi gằm mặt sát vở ở bàn thường chạm đúng nỗi lo cột sống và cận thị của phụ huynh." },
+    { nhan: "Điểm bán", tu_khoa: "Chứng minh", mo_ta: "Mọi tính năng đều được demo bằng hành động: đứng lên bàn, nghiêng mặt bàn, quay tay nâng hạ — không nói suông." },
+    { nhan: "Giá trị", tu_khoa: "Dài hạn", mo_ta: "Thông điệp \u201cbàn lớn cùng con 10 năm\u201d chuyển khung suy nghĩ từ chi phí sang khoản đầu tư cho sức khỏe của con." }
+  ],
+  storyboard: [
+    {
+      so: "01", khoang: "0:00\u20130:05", tieu_de: "Hook nghịch lý — bố đứng lên bàn",
+      mo_ta: "Mở đầu bằng hành động phi lý để chặn lướt, đồng thời gieo luôn thông điệp về độ bền khung thép.",
+      khung_hinh: [
+        {
+          thoi_diem: "0:00",
+          chu_thich: "Người bố bước hẳn lên mặt bàn, đứng thẳng, dang hai tay giữ thăng bằng.",
+          nhan_xet: "Hình ảnh nghịch lý mạnh, tạo mâu thuẫn tức thì. Máy quay hơi hất lên làm hành động trông rủi ro hơn, tăng kịch tính.",
+          loi_thoai: "Bàn học của con mà chịu được cả bố nó đứng lên?",
+          goc_may: { co_canh: "WS", goc: "Low angle", chuyen_dong: "tĩnh" },
+          hanh_dong: "Bố bước từ ghế lên mặt bàn, đứng thẳng người, nhún nhẹ hai lần để thử độ chắc.",
+          boi_canh: "Phòng học tại nhà, ánh sáng cửa sổ ban ngày, kệ sách phía sau.",
+          am_thanh: "Tiếng bước chân lên mặt gỗ, nhạc nền hồi hộp, thoại đặt câu hỏi.",
+          trang_phuc: "Bố mặc áo polo xanh navy, quần kaki.",
+          dien_vien: "Người bố (nhân vật chính).",
+          anh: ""
+        },
+        {
+          thoi_diem: "0:03",
+          chu_thich: "Cận cảnh chân bàn khung thép chữ T, hoàn toàn không rung lắc.",
+          nhan_xet: "Cắt cận đúng lúc củng cố bằng chứng — người xem tự thấy khung không nhúc nhích thay vì phải tin lời nói.",
+          loi_thoai: "Khung thép chữ T chịu tải 100 ký, nhún cỡ nào cũng không xi nhê.",
+          goc_may: { co_canh: "CU", goc: "Eye level", chuyen_dong: "tĩnh" },
+          hanh_dong: "Ống kính lia chậm dọc chân bàn trong khi bố vẫn đứng phía trên.",
+          boi_canh: "Sát sàn gỗ, ánh sáng tự nhiên.",
+          am_thanh: "Nhạc nền tiếp diễn, thoại thuyết minh.",
+          trang_phuc: "—",
+          dien_vien: "Chỉ thấy chân bàn và chân người bố.",
+          anh: ""
+        }
+      ]
+    },
+    {
+      so: "02", khoang: "0:05\u20130:18", tieu_de: "Demo chuỗi tính năng cốt lõi",
+      mo_ta: "Ba tính năng bán hàng chính được demo liên tiếp bằng hành động của chính đứa trẻ, nhịp cắt nhanh 3\u20134 giây/cảnh.",
+      khung_hinh: [
+        {
+          thoi_diem: "0:07",
+          chu_thich: "Bé trai tự quay tay nâng mặt bàn lên ngang khuỷu tay mình.",
+          nhan_xet: "Để chính đứa trẻ thao tác chứng minh cơ chế nâng hạ nhẹ, trẻ tự dùng được — phụ huynh không phải canh chỉnh.",
+          loi_thoai: "Con lớn tới đâu, bàn cao tới đó — bé tự quay được luôn nè.",
+          goc_may: { co_canh: "MCU", goc: "Eye level", chuyen_dong: "tĩnh" },
+          hanh_dong: "Bé đứng cạnh bàn, hai tay quay tay quay, mặt bàn nâng dần lên rõ ràng trong khung hình.",
+          boi_canh: "Phòng học tại nhà, ánh sáng tự nhiên.",
+          am_thanh: "Tiếng cơ cấu quay tay lách cách, thoại của bố ngoài hình.",
+          trang_phuc: "Bé mặc đồng phục học sinh trắng.",
+          dien_vien: "Bé trai; giọng bố ngoài hình.",
+          anh: ""
+        },
+        {
+          thoi_diem: "0:12",
+          chu_thich: "Mặt bàn nghiêng 40 độ, chồng sách vẫn nằm yên nhờ thanh chặn.",
+          nhan_xet: "Cảnh \u201cthách thức trọng lực\u201d dễ gây tò mò và bình luận — điểm neo chia sẻ của video.",
+          loi_thoai: "Nghiêng cỡ này sách cũng không rớt, vẽ với đọc là đúng bài.",
+          goc_may: { co_canh: "MCU", goc: "Eye level", chuyen_dong: "lia ngang chậm" },
+          hanh_dong: "Tay bố kéo mặt bàn nghiêng dần, sách và hộp bút vẫn đứng yên sau thanh chặn.",
+          boi_canh: "Phòng học, ánh sáng tự nhiên.",
+          am_thanh: "Tiếng khớp nghiêng, nhạc nền, thoại thuyết minh.",
+          trang_phuc: "—",
+          dien_vien: "Bàn tay người bố.",
+          anh: ""
+        },
+        {
+          thoi_diem: "0:15",
+          chu_thich: "Cận khay đọc sách dựng đứng, bé ngồi đọc với lưng thẳng.",
+          nhan_xet: "Kết nối trực tiếp tính năng với lợi ích sức khỏe: khay giữ sách xa mắt đúng khoảng cách, bé không phải cúi.",
+          loi_thoai: "Khay đọc giữ sách xa mắt đúng chuẩn, hết cảnh dí sát mặt vô vở.",
+          goc_may: { co_canh: "CU", goc: "Eye level", chuyen_dong: "tĩnh" },
+          hanh_dong: "Bé đặt sách lên khay, ngồi thẳng lưng đọc, camera cắt cận rồi lùi ra trung cảnh.",
+          boi_canh: "Phòng học, đèn bàn bật sáng.",
+          am_thanh: "Nhạc nền dịu lại, thoại thuyết minh.",
+          trang_phuc: "Bé mặc đồng phục học sinh trắng.",
+          dien_vien: "Bé trai.",
+          anh: ""
+        }
+      ]
+    },
+    {
+      so: "03", khoang: "0:18\u20130:32", tieu_de: "So sánh tư thế + chốt CTA",
+      mo_ta: "Màn hình chia đôi đối chiếu sai\u2013đúng tư thế, kết bằng khoảnh khắc cảm xúc bố con và lời kêu gọi rõ ràng.",
+      khung_hinh: [
+        {
+          thoi_diem: "0:20",
+          chu_thich: "Màn hình chia đôi: bên trái bé cúi gằm ở bàn thường, bên phải bé lưng thẳng ở S110.",
+          nhan_xet: "So sánh trực diện là cảnh chuyển đổi mạnh nhất video — phụ huynh nhìn thấy chính con mình ở nửa bên trái.",
+          loi_thoai: "Cũng là ngồi học, mà một bên là gù lưng cận thị, một bên là dáng thẳng tự tin.",
+          goc_may: { co_canh: "MS", goc: "Eye level", chuyen_dong: "tĩnh (split screen)" },
+          hanh_dong: "Hai cảnh quay song song cùng góc máy, bé ngồi học ở hai loại bàn khác nhau.",
+          boi_canh: "Cùng một phòng học, dựng lại hai bối cảnh.",
+          am_thanh: "Nhạc nền lắng xuống, thoại nhấn mạnh từng vế.",
+          trang_phuc: "Bé mặc đồng phục học sinh trắng ở cả hai cảnh.",
+          dien_vien: "Bé trai.",
+          anh: ""
+        },
+        {
+          thoi_diem: "0:28",
+          chu_thich: "Bố xoa đầu con đang ngồi học, quay sang camera đọc CTA và chỉ tay xuống giỏ hàng.",
+          nhan_xet: "Khoảnh khắc cảm xúc bố con làm mềm video demo kỹ thuật, CTA kèm cử chỉ điều hướng cụ thể.",
+          loi_thoai: "Bàn lớn cùng con cả chục năm — ghé giỏ hàng màu vàng chọn size cho bé nha.",
+          goc_may: { co_canh: "MCU", goc: "Eye level", chuyen_dong: "tĩnh" },
+          hanh_dong: "Bố đứng cạnh bàn xoa đầu con, cười, chỉ tay xuống góc màn hình.",
+          boi_canh: "Phòng học, ánh sáng ấm.",
+          am_thanh: "Nhạc nền vui, thoại kêu gọi hành động.",
+          trang_phuc: "Bố áo polo navy, bé đồng phục trắng.",
+          dien_vien: "Bố và bé trai.",
+          anh: ""
+        }
+      ]
+    }
+  ],
+  checklist: [
+    { tieu_chi: "3s đầu giữ người", dat: "dat", ghi_chu: "Hình ảnh bố đứng lên bàn trẻ em là nghịch lý thị giác mạnh, kèm câu hỏi mở khiến người xem chờ câu trả lời." },
+    { tieu_chi: "Pain point cụ thể", dat: "dat", ghi_chu: "Nỗi lo gù lưng, cận thị được diễn trực quan bằng cảnh bé cúi gằm ở bàn thường, không cần thoại giải thích dài." },
+    { tieu_chi: "Kết quả nhìn thấy", dat: "dat", ghi_chu: "Độ bền, nâng hạ, chống rơi sách, tư thế thẳng lưng đều nhìn thấy được trên hình, không chỉ nói." },
+    { tieu_chi: "Có so sánh", dat: "dat", ghi_chu: "Split screen sai\u2013đúng tư thế ở 0:20 là so sánh trực diện cùng góc máy, rất thuyết phục." },
+    { tieu_chi: "Quá trình sử dụng", dat: "mot_phan", ghi_chu: "Có cảnh thao tác nâng hạ và đặt sách, nhưng thiếu cảnh bé ngồi học thực tế trọn vẹn trong sinh hoạt hằng ngày." },
+    { tieu_chi: "Cảnh chuyển đổi mạnh", dat: "dat", ghi_chu: "Cảnh chia đôi màn hình đánh thẳng vào hình ảnh đứa con của người xem — đây là cảnh quyết định chuyển đổi." },
+    { tieu_chi: "CTA rõ ràng", dat: "dat", ghi_chu: "\u201cGhé giỏ hàng màu vàng chọn size\u201d + chỉ tay xuống: có hành động, có vị trí, có việc cần làm (chọn size)." },
+    { tieu_chi: "Trẻ em thật trải nghiệm", dat: "dat", ghi_chu: "Bé trai tự thao tác quay tay nâng bàn và ngồi đọc — không dùng người lớn đóng thế." },
+    { tieu_chi: "Demo tính năng cốt lõi", dat: "dat", ghi_chu: "Chịu tải, nâng hạ, nghiêng mặt bàn, khay đọc — 4 tính năng bán hàng chính đều được demo trong 32 giây." },
+    { tieu_chi: "Chạm tâm lý phụ huynh", dat: "dat", ghi_chu: "Thông điệp cột sống + \u201cbàn lớn cùng con cả chục năm\u201d xử lý luôn phản đối về giá bằng khung đầu tư dài hạn." }
+  ],
+  cong_thuc: {
+    cau_truc_hinh_anh: ["Hook nghịch lý (bố đứng lên bàn)", "Cận bằng chứng (khung thép không rung)", "Demo tính năng liên hoàn (nâng hạ \u2192 nghiêng \u2192 khay đọc)", "Split screen sai\u2013đúng tư thế", "Khoảnh khắc cảm xúc bố con + CTA"],
+    cau_truc_loi_thoai: ["Câu hỏi nghịch lý gây tò mò", "Bằng chứng kỹ thuật (chịu tải, cơ chế)", "Lợi ích gắn với sức khỏe của con", "So sánh hậu quả sai\u2013đúng", "Khung đầu tư dài hạn + CTA điều hướng"],
+    nhan_dinh: "Video đi đúng công thức chứng minh trước, thuyết phục sau: mọi luận điểm bán hàng đều có hành động trên hình làm bằng chứng trước khi lời thoại khẳng định. Hook nghịch lý phù hợp thuật toán vì tạo bình luận tranh luận, trong khi cảnh split screen mới là cảnh tạo chuyển đổi thật. Điểm có thể cải thiện: bổ sung một cảnh sinh hoạt đời thường (bé ngồi học buổi tối cùng bố mẹ) để tăng độ đời và giữ chân nhóm phụ huynh xem lại lần hai."
+  },
+  kho_loi_thoai: [
+    "Bàn học của con mà chịu được cả bố nó đứng lên?",
+    "Con lớn tới đâu, bàn cao tới đó — bé tự quay được luôn nè.",
+    "Nghiêng cỡ này sách cũng không rớt.",
+    "Cũng là ngồi học, mà một bên là gù lưng cận thị, một bên là dáng thẳng tự tin.",
+    "Bàn lớn cùng con cả chục năm — ghé giỏ hàng màu vàng chọn size cho bé nha."
+  ],
+  kho_hinh_anh: [
+    "Người lớn đứng/nhún trên mặt bàn để test khung chịu tải.",
+    "Trẻ tự quay tay nâng mặt bàn theo chiều cao của mình.",
+    "Nghiêng mặt bàn với chồng sách đứng yên sau thanh chặn.",
+    "Split screen cùng góc máy: tư thế sai ở bàn thường vs tư thế đúng ở bàn chống gù.",
+    "Bố xoa đầu con + chỉ tay xuống giỏ hàng khi đọc CTA."
+  ]
+};
+
+/* ================= RENDER ================= */
+const fmt = n => new Intl.NumberFormat('vi-VN').format(n ?? 0);
+const esc = s => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+const DAT_MAP = {
+  dat:      { cls: "badge--dat",     text: "Đạt" },
+  mot_phan: { cls: "badge--motphan", text: "Một phần" },
+  khong_dat:{ cls: "badge--khong",   text: "Chưa đạt" }
+};
+
+const STAT_LABELS = { luot_xem:"Lượt xem", luot_thich:"Lượt thích", binh_luan:"Bình luận", chia_se:"Chia sẻ", luu:"Lưu" };
+const META_LABELS = { nen_tang:"Nền tảng", thoi_luong:"Thời lượng", the_loai:"Thể loại", san_pham:"Sản phẩm", guong_mat:"Gương mặt", cta:"CTA" };
+
+function render(d){
+  let h = "";
+
+  /* Hero */
+  h += `<div class="hero">
+    <div class="eyebrow">Sakawin Content Lab · Phân tích video bán hàng</div>
+    <h1>Phiếu <em>phân tích</em> video</h1>
+    <p class="hook">${esc(d.hook_mo_ta)}</p>
+    <p class="summary">${esc(d.tom_tat)}</p>
+    ${d.link_goc ? `<a class="link-goc" href="${esc(d.link_goc)}" target="_blank" rel="noopener"><span class="dot"></span>Xem video gốc</a>` : ""}
+    <div class="meta-grid">
+      ${Object.entries(META_LABELS).map(([k,label]) => d.meta && d.meta[k] ? `
+        <div class="meta-item"><div class="label">${label}</div><div class="value">${esc(d.meta[k])}</div></div>` : "").join("")}
+    </div>
+  </div>`;
+
+  /* Vì sao chạy */
+  if (Array.isArray(d.vi_sao_chay) && d.vi_sao_chay.length){
+    h += `<section>
+      <div class="eyebrow">Chốt nhanh</div>
+      <h2>Vì sao nó chạy</h2>
+      <div class="why-grid">
+        ${d.vi_sao_chay.map(w => `
+          <div class="why-card">
+            <div class="label">${esc(w.nhan)}</div>
+            <div class="keyword">${esc(w.tu_khoa)}</div>
+            <div class="desc">${esc(w.mo_ta)}</div>
+          </div>`).join("")}
+      </div>
+    </section>`;
+  }
+
+  /* Chỉ số */
+  if (d.chi_so){
+    h += `<section>
+      <div class="eyebrow">Tương tác</div>
+      <h2>Chỉ số thực tế · ${esc(d.chi_so_nen_tang || d.meta?.nen_tang || "")}</h2>
+      <div class="stats">
+        ${Object.entries(STAT_LABELS).map(([k,label]) => `
+          <div class="stat"><div class="num">${fmt(d.chi_so[k])}</div><div class="lbl">${label}</div></div>`).join("")}
+      </div>
+    </section>`;
+  }
+
+  /* Storyboard */
+  if (Array.isArray(d.storyboard) && d.storyboard.length){
+    h += `<section>
+      <div class="eyebrow">Storyboard</div>
+      <h2>Phân tích theo phân cảnh</h2>
+      ${d.storyboard.map(sc => `
+        <div class="scene">
+          <div class="scene-head">
+            <span class="scene-no">${esc(sc.so)}</span>
+            <span class="scene-range">${esc(sc.khoang)}</span>
+            <span class="scene-title">${esc(sc.tieu_de)}</span>
+          </div>
+          <p class="scene-desc">${esc(sc.mo_ta)}</p>
+          <div class="frames">
+            ${(sc.khung_hinh || []).map(f => `
+              <div class="frame">
+                <div class="frame-top">
+                  <div class="thumb">${f.anh ? `<img src="${esc(f.anh)}" alt="Khung hình ${esc(f.thoi_diem)}">` : `<span class="rec"></span>${esc(f.thoi_diem)}`}</div>
+                  <div class="frame-body">
+                    <div class="tcode">▸ ${esc(f.thoi_diem)}</div>
+                    <div class="frame-cap">${esc(f.chu_thich)}</div>
+                    <div class="frame-note">${esc(f.nhan_xet)}</div>
+                    ${f.loi_thoai ? `<div class="voice"><div class="vlabel">🎙 Voice-off</div><div class="vtext">\u201c${esc(f.loi_thoai)}\u201d</div></div>` : ""}
+                  </div>
+                </div>
+                <div class="detail-grid">
+                  <div class="detail"><div class="dlabel">Góc máy · Camera</div>
+                    <div class="cam-tags">
+                      ${f.goc_may?.co_canh ? `<span class="cam-tag">Cỡ cảnh <b>${esc(f.goc_may.co_canh)}</b></span>` : ""}
+                      ${f.goc_may?.goc ? `<span class="cam-tag">Góc <b>${esc(f.goc_may.goc)}</b></span>` : ""}
+                      ${f.goc_may?.chuyen_dong ? `<span class="cam-tag">Chuyển động <b>${esc(f.goc_may.chuyen_dong)}</b></span>` : ""}
+                    </div>
+                  </div>
+                  <div class="detail"><div class="dlabel">Hành động · Action</div>${esc(f.hanh_dong)}</div>
+                  <div class="detail"><div class="dlabel">Bối cảnh · Setting</div>${esc(f.boi_canh)}</div>
+                  <div class="detail"><div class="dlabel">Âm thanh · Sound</div>${esc(f.am_thanh)}</div>
+                  <div class="detail"><div class="dlabel">Trang phục · Wardrobe</div>${esc(f.trang_phuc)}</div>
+                  <div class="detail"><div class="dlabel">Diễn viên · Cast</div>${esc(f.dien_vien)}</div>
+                </div>
+              </div>`).join("")}
+          </div>
+        </div>`).join("")}
+    </section>`;
+  }
+
+  /* Checklist */
+  if (Array.isArray(d.checklist) && d.checklist.length){
+    h += `<section>
+      <div class="eyebrow">Checklist</div>
+      <h2>${d.checklist.length} điểm hiệu quả</h2>
+      <table class="checklist">
+        <thead><tr><th style="width:32%">Tiêu chí</th><th style="width:14%">Mức độ</th><th>Ghi chú</th></tr></thead>
+        <tbody>
+          ${d.checklist.map((c,i) => {
+            const b = DAT_MAP[c.dat] || DAT_MAP.khong_dat;
+            return `<tr>
+              <td><div class="crit"><span class="crit-no">${i+1}</span><span>${esc(c.tieu_chi)}</span></div></td>
+              <td><span class="badge ${b.cls}">${b.text}</span></td>
+              <td class="note">${esc(c.ghi_chu)}</td>
+            </tr>`;
+          }).join("")}
+        </tbody>
+      </table>
+    </section>`;
+  }
+
+  /* Công thức */
+  if (d.cong_thuc){
+    const chain = arr => (arr||[]).map((s,i) => `${i>0?'<span class="arrow">→</span>':''}<span class="step">${esc(s)}</span>`).join("");
+    h += `<section>
+      <div class="eyebrow">Công thức</div>
+      <h2>Tái dùng</h2>
+      <div class="formula-block"><div class="flabel">Cấu trúc hình ảnh</div><div class="chain">${chain(d.cong_thuc.cau_truc_hinh_anh)}</div></div>
+      <div class="formula-block"><div class="flabel">Cấu trúc lời thoại</div><div class="chain">${chain(d.cong_thuc.cau_truc_loi_thoai)}</div></div>
+      ${d.cong_thuc.nhan_dinh ? `<div class="verdict"><p>${esc(d.cong_thuc.nhan_dinh)}</p></div>` : ""}
+    </section>`;
+  }
+
+  /* Kho */
+  if ((d.kho_loi_thoai||[]).length || (d.kho_hinh_anh||[]).length){
+    h += `<section>
+      <div class="eyebrow">Kho tái sử dụng</div>
+      <h2>Lời thoại &amp; hình ảnh đắt giá</h2>
+      <div class="banks">
+        <div class="bank bank--quotes"><h3>Kho lời thoại</h3><ul>${(d.kho_loi_thoai||[]).map(q=>`<li>${esc(q)}</li>`).join("")}</ul></div>
+        <div class="bank"><h3>Kho hình ảnh</h3><ul>${(d.kho_hinh_anh||[]).map(q=>`<li>${esc(q)}</li>`).join("")}</ul></div>
+      </div>
+    </section>`;
+  }
+
+  document.getElementById("report").innerHTML = h;
+  document.title = "Phiếu phân tích video · " + (d.tieu_de || "Sakawin Content Lab");
+  CURRENT = d;
+}
+
+/* ================= UI ================= */
+let CURRENT = SAMPLE;
+const overlay = document.getElementById("overlay");
+const errMsg = document.getElementById("errMsg");
+
+/* Xuất file HTML độc lập: nhúng dữ liệu hiện tại vào file để mở ở đâu cũng hiển thị đúng phiếu này */
+function slugify(s){
+  return String(s || "phieu-phan-tich").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase()
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60) || "phieu-phan-tich";
+}
+document.getElementById("btnExport").addEventListener("click", () => {
+  let tag = document.getElementById("embeddedData");
+  if (!tag){
+    tag = document.createElement("script");
+    tag.type = "application/json";
+    tag.id = "embeddedData";
+    document.body.insertBefore(tag, document.body.lastElementChild);
+  }
+  tag.textContent = JSON.stringify(CURRENT).replace(/</g, "\\u003c");
+  const reportEl = document.getElementById("report");
+  const savedReport = reportEl.innerHTML;
+  const savedInput = document.getElementById("jsonInput").value;
+  reportEl.innerHTML = "";
+  document.getElementById("jsonInput").value = "";
+  overlay.classList.remove("open");
+  const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  reportEl.innerHTML = savedReport;
+  document.getElementById("jsonInput").value = savedInput;
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = slugify(CURRENT.tieu_de) + ".html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(a.href);
+});
+
+document.getElementById("btnPaste").addEventListener("click", () => { overlay.classList.add("open"); document.getElementById("jsonInput").focus(); });
+document.getElementById("btnClose").addEventListener("click", () => overlay.classList.remove("open"));
+overlay.addEventListener("click", e => { if (e.target === overlay) overlay.classList.remove("open"); });
+document.getElementById("btnPrint").addEventListener("click", () => window.print());
+document.getElementById("btnDismiss").addEventListener("click", () => document.getElementById("sampleBanner").style.display = "none");
+
+document.getElementById("btnRender").addEventListener("click", () => {
+  let raw = document.getElementById("jsonInput").value.trim();
+  raw = raw.replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
+  const start = raw.indexOf("{"), end = raw.lastIndexOf("}");
+  if (start >= 0 && end > start) raw = raw.slice(start, end + 1);
+  try {
+    const data = JSON.parse(raw);
+    if (!data.tieu_de && !data.storyboard) throw new Error("thiếu trường dữ liệu chính");
+    render(data);
+    overlay.classList.remove("open");
+    errMsg.style.display = "none";
+    document.getElementById("sampleBanner").style.display = "none";
+    window.scrollTo({ top: 0 });
+  } catch (e) {
+    errMsg.textContent = "Không đọc được dữ liệu: " + e.message + ". Kiểm tra lại JSON đã copy đủ từ { đến } chưa.";
+    errMsg.style.display = "block";
+  }
+});
+
+document.getElementById("footDate").textContent = new Date().toLocaleDateString("vi-VN");
+(function boot(){
+  const embedded = document.getElementById("embeddedData");
+  if (embedded){
+    try {
+      render(JSON.parse(embedded.textContent));
+      const b = document.getElementById("sampleBanner");
+      if (b) b.style.display = "none";
+      return;
+    } catch(e){ /* dữ liệu nhúng lỗi thì rơi về mẫu */ }
+  }
+  render(SAMPLE);
+})();
+</script>
+</body>
+</html>
